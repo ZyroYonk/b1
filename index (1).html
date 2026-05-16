@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forge Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0f;
+    --bg2: #0d1117;
+    --card: #0f1520;
+    --border: #1e2d42;
+    --orange: #ff6b1a;
+    --orange2: #ff9a4a;
+    --red: #ff2d55;
+    --blue: #1a8fff;
+    --glow: 0 0 20px rgba(255,107,26,0.4);
+    --glow2: 0 0 40px rgba(255,107,26,0.2);
+    --text: #e8eaf0;
+    --muted: #6b7a99;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── PARTICLES CANVAS ─── */
+  #particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 70px;
+    background: rgba(8,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, var(--orange), var(--orange2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .nav-logo span {
+    background: linear-gradient(135deg, #ffffff, #aabbcc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.3rem;
+    list-style: none;
+    align-items: center;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--muted);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.5rem 1.1rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover, .nav-links a.active {
+    color: var(--orange);
+    background: rgba(255,107,26,0.08);
+  }
+
+  .nav-discord {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(88,101,242,0.15) !important;
+    border: 1px solid rgba(88,101,242,0.3) !important;
+    color: #7289da !important;
+    padding: 0.4rem 1rem !important;
+    border-radius: 8px !important;
+    transition: all 0.25s !important;
+  }
+
+  .nav-discord:hover {
+    background: rgba(88,101,242,0.3) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+  }
+
+  /* ─── PAGES ─── */
+  .page { display: none; min-height: 100vh; padding-top: 70px; position: relative; z-index: 1; }
+  .page.active { display: block; }
+
+  /* ─── HOME PAGE ─── */
+  .hero {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 2rem;
+    position: relative;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,107,26,0.1);
+    border: 1px solid rgba(255,107,26,0.3);
+    color: var(--orange2);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 7px; height: 7px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(255,107,26,0.5); }
+    50% { opacity:0.7; box-shadow: 0 0 0 8px rgba(255,107,26,0); }
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 7rem);
+    line-height: 1;
+    letter-spacing: -2px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+  }
+
+  .hero-title .forge { color: #fff; }
+  .hero-title .hub {
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 30px rgba(255,107,26,0.6));
+  }
+
+  .hero-sub {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.7s 0.2s ease both;
+  }
+
+  .hero-sub strong { color: var(--orange2); }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.7s 0.3s ease both;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.85rem 2rem;
+    border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), #e05010);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(255,107,26,0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255,107,26,0.6);
+    filter: brightness(1.1);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-outline:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(255,107,26,0.05);
+    transform: translateY(-2px);
+  }
+
+  /* ─── STATS ─── */
+  .stats {
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 5rem auto 0;
+    max-width: 800px;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+
+  .stat-card {
+    flex: 1;
+    min-width: 160px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.8rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card:first-child { border-radius: 12px 0 0 12px; }
+  .stat-card:last-child { border-radius: 0 12px 12px 0; }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 2rem;
+    background: linear-gradient(135deg, var(--orange), var(--orange2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  /* ─── FEATURES SECTION ─── */
+  .section {
+    padding: 6rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(255,107,26,0.06), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: rgba(255,107,26,0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4), var(--glow);
+  }
+
+  .feature-card:hover::after { opacity: 1; }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.6rem;
+    letter-spacing: 1px;
+  }
+
+  .feature-desc {
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── SCRIPT SECTION ─── */
+  .script-section {
+    padding: 4rem 2rem 6rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .script-box {
+    background: #040608;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-top: 2rem;
+    text-align: left;
+  }
+
+  .script-header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0.8rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .script-dots { display: flex; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #febc2e; }
+  .dot-g { background: #28c840; }
+
+  .copy-btn {
+    background: rgba(255,107,26,0.15);
+    border: 1px solid rgba(255,107,26,0.3);
+    color: var(--orange);
+    padding: 0.3rem 0.9rem;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .copy-btn:hover {
+    background: rgba(255,107,26,0.3);
+    color: #fff;
+  }
+
+  .script-code {
+    padding: 1.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #a8d8a8;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+
+  .script-code .fn { color: #66b2ff; }
+  .script-code .str { color: #ff9a4a; }
+
+  /* ─── GAMES PAGE ─── */
+  .page-hero {
+    padding: 5rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .page-hero-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .page-hero-title span {
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-hero-sub {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 0 2rem 5rem;
+  }
+
+  .game-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .game-card:hover {
+    border-color: rgba(255,107,26,0.5);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), var(--glow2);
+  }
+
+  .game-thumb {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    position: relative;
+  }
+
+  .game-thumb.blox { background: linear-gradient(135deg, #1a0a2e, #2d0a3e); }
+  .game-thumb.mm2 { background: linear-gradient(135deg, #0a0a1a, #1a0a0a); }
+  .game-thumb.adopt { background: linear-gradient(135deg, #0a1a0a, #0a2a1a); }
+  .game-thumb.da { background: linear-gradient(135deg, #1a1a0a, #2a1a0a); }
+  .game-thumb.tower { background: linear-gradient(135deg, #0a1a2a, #0a0a2a); }
+  .game-thumb.prison { background: linear-gradient(135deg, #1a0a0a, #2a0a0a); }
+  .game-thumb.pet { background: linear-gradient(135deg, #0a0a2a, #1a0a2a); }
+  .game-thumb.brookhaven { background: linear-gradient(135deg, #1a0a1a, #0a1a1a); }
+
+  .game-status {
+    position: absolute;
+    top: 12px; right: 12px;
+    padding: 0.25rem 0.7rem;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .status-supported {
+    background: rgba(40,200,100,0.15);
+    border: 1px solid rgba(40,200,100,0.4);
+    color: #4ddb8a;
+  }
+
+  .status-soon {
+    background: rgba(255,107,26,0.15);
+    border: 1px solid rgba(255,107,26,0.4);
+    color: var(--orange);
+  }
+
+  .game-info {
+    padding: 1.2rem;
+  }
+
+  .game-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.5px;
+  }
+
+  .game-features {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 0.7rem;
+  }
+
+  .game-tag {
+    background: rgba(255,107,26,0.1);
+    border: 1px solid rgba(255,107,26,0.2);
+    color: var(--orange2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── KEY PAGE ─── */
+  .key-page {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+  }
+
+  .key-container {
+    max-width: 640px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .key-icon {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, rgba(255,107,26,0.2), rgba(255,107,26,0.05));
+    border: 1px solid rgba(255,107,26,0.4);
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    margin: 0 auto 2rem;
+    box-shadow: var(--glow);
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .key-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.8rem, 4vw, 2.5rem);
+    font-weight: 900;
+    color: #fff;
+    margin-bottom: 1rem;
+  }
+
+  .key-title span {
+    background: linear-gradient(135deg, var(--orange), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .key-desc {
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 2.5rem;
+  }
+
+  .key-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+    text-align: left;
+  }
+
+  .key-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    transition: border-color 0.2s;
+  }
+
+  .key-step:hover { border-color: rgba(255,107,26,0.3); }
+
+  .step-num {
+    width: 36px; height: 36px;
+    min-width: 36px;
+    background: linear-gradient(135deg, var(--orange), #e05010);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #fff;
+  }
+
+  .step-text {
+    flex: 1;
+  }
+
+  .step-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+    margin-bottom: 0.2rem;
+  }
+
+  .step-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .key-get-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, var(--orange), #e05010);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s;
+    box-shadow: 0 4px 30px rgba(255,107,26,0.5);
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .key-get-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 40px rgba(255,107,26,0.7);
+    filter: brightness(1.1);
+  }
+
+  .key-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(255,45,85,0.08);
+    border: 1px solid rgba(255,45,85,0.2);
+    color: #ff6b8a;
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    margin-top: 1.5rem;
+    text-align: left;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  footer span {
+    color: var(--orange);
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(30px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  @keyframes fadeDown {
+    from { opacity:0; transform: translateY(-20px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  /* ─── GLOW BG ─── */
+  .glow-bg {
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,107,26,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  /* ─── GAME LIST ─── */
+  .glist-wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .glist-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.3rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: border-color 0.2s, transform 0.2s;
+    flex-wrap: wrap;
+  }
+
+  .glist-item:hover { border-color: rgba(255,107,26,0.35); transform: translateX(3px); }
+  .glist-item[data-status="yellow"] { border-left: 3px solid #f5c842; }
+  .glist-item[data-status="red"] { border-left: 3px solid #ff4444; opacity: 0.75; }
+  .glist-item[data-status="green"] { border-left: 3px solid #3ddc84; }
+
+  .glist-left {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 260px;
+    flex: 1;
+  }
+
+  .glist-dot { font-size: 1rem; flex-shrink: 0; }
+
+  .glist-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    letter-spacing: 0.3px;
+  }
+
+  .glist-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    flex: 2;
+    justify-content: flex-end;
+  }
+
+  .glist-script-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #040608;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.7rem;
+    flex: 1;
+    min-width: 0;
+    max-width: 420px;
+  }
+
+  .glist-code {
+    font-family: 'Courier New', monospace;
+    font-size: 0.72rem;
+    color: #a8d8a8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .glist-copy {
+    background: rgba(255,107,26,0.15);
+    border: 1px solid rgba(255,107,26,0.3);
+    color: var(--orange);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .glist-copy:hover { background: rgba(255,107,26,0.3); color: #fff; }
+
+  .glist-key-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: linear-gradient(135deg, var(--orange), #e05010);
+    color: #fff;
+    text-decoration: none;
+    padding: 0.42rem 1rem;
+    border-radius: 8px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    box-shadow: 0 3px 12px rgba(255,107,26,0.35);
+    flex-shrink: 0;
+  }
+
+  .glist-key-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,107,26,0.55);
+    filter: brightness(1.1);
+  }
+
+  @media (max-width: 700px) {
+    .glist-item { flex-direction: column; }
+    .glist-right { justify-content: flex-start; width: 100%; }
+    .glist-script-row { max-width: 100%; }
+  }
+
+  /* ─── FEATURED GAME CARD ─── */
+  .featured-game { grid-column: 1 / -1 !important; }
+
+  .feature-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255,107,26,0.05);
+    border: 1px solid rgba(255,107,26,0.12);
+    border-radius: 8px;
+    padding: 0.5rem 0.8rem;
+    transition: all 0.2s;
+  }
+
+  .feature-row:hover {
+    background: rgba(255,107,26,0.1);
+    border-color: rgba(255,107,26,0.3);
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    width: 60px; height: 3px;
+    background: linear-gradient(90deg, var(--orange), transparent);
+    margin: 1rem auto;
+    border-radius: 2px;
+  }
+
+  .tag-line {
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    font-weight: 400;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" onclick="showPage('home')">FORGE<span>HUB</span></a>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" id="nav-home" class="active">Home</a></li>
+    <li><a onclick="showPage('games')" id="nav-games">Games</a></li>
+    <li><a onclick="showPage('key')" id="nav-key">Get Key</a></li>
+    <li><a href="https://discord.gg/D5NKtBJEzz" target="_blank" class="nav-discord">
+      <svg width="16" height="12" viewBox="0 0 24 18" fill="currentColor"><path d="M20.317 1.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.565 18.565 0 0 0-5.487 0A12.598 12.598 0 0 0 8.638.038a.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.175 13.175 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028z"/></svg>
+      Discord
+    </a></li>
+  </ul>
+</nav>
+
+<!-- ============ HOME PAGE ============ -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="glow-bg"></div>
+    <div class="hero-badge">🔥 Now Live — Forge Hub v1.0</div>
+    <h1 class="hero-title">
+      <span class="forge">FORGE</span><br>
+      <span class="hub">HUB</span>
+    </h1>
+    <p class="hero-sub">
+      The ultimate <strong>Roblox script hub</strong>. Powerful features, lightning-fast execution, and undetected performance across top games.
+    </p>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="showPage('key')">
+        🔑 Get Key
+      </button>
+      <button class="btn btn-outline" onclick="showPage('games')">
+        🎮 View Games
+      </button>
+      <a href="https://discord.gg/D5NKtBJEzz" target="_blank" class="btn btn-outline" style="border-color:rgba(88,101,242,0.4);color:#7289da;">
+        <svg width="16" height="12" viewBox="0 0 24 18" fill="currentColor"><path d="M20.317 1.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.565 18.565 0 0 0-5.487 0A12.598 12.598 0 0 0 8.638.038a.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 6.093-.32 10.555.099 14.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026 13.83 13.83 0 0 0 1.226-1.963.074.074 0 0 0-.041-.104 13.175 13.175 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028z"/></svg>
+        Join Discord
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Active Users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">8+</div>
+        <div class="stat-label">Games Supported</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">99.9%</div>
+        <div class="stat-label">Uptime</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">FREE</div>
+        <div class="stat-label">Always</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-tag">Why Forge Hub?</span>
+      <h2 class="section-title">Built for Performance</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-name">Lightning Fast</div>
+        <div class="feature-desc">Optimized execution engine that runs scripts instantly without lag or delay.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <div class="feature-name">Undetected</div>
+        <div class="feature-desc">Advanced bypass methods keep you safe. Regular updates to stay ahead of patches.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎮</div>
+        <div class="feature-name">Multi-Game</div>
+        <div class="feature-desc">Supports the most popular Roblox games with dedicated, feature-packed scripts.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔄</div>
+        <div class="feature-name">Auto-Update</div>
+        <div class="feature-desc">Scripts update automatically. Always get the latest features and bug fixes.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <div class="feature-name">Community Support</div>
+        <div class="feature-desc">Active Discord community with fast support, changelogs, and announcements.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆓</div>
+        <div class="feature-name">Free Forever</div>
+        <div class="feature-desc">Forge Hub is completely free. No premium tiers, no paywalls — just pure power.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPT SECTION -->
+  <section class="script-section">
+    <span class="section-tag">Quick Start</span>
+    <h2 class="section-title" style="font-family:'Orbitron',monospace;font-size:clamp(1.5rem,3vw,2rem);font-weight:700;color:#fff;">Execute The Script</h2>
+    <div class="divider"></div>
+    <p class="tag-line">Copy and paste into your Roblox executor</p>
+    <div class="script-box">
+      <div class="script-header">
+        <div class="script-dots">
+          <div class="dot dot-r"></div>
+          <div class="dot dot-y"></div>
+          <div class="dot dot-g"></div>
+        </div>
+        <button class="copy-btn" onclick="copyScript()">📋 Copy</button>
+      </div>
+      <div class="script-code"><span class="fn">loadstring</span>(<span class="fn">game</span>:<span class="fn">HttpGet</span>(<span class="str">"https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"</span>))()</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 <span>Forge Hub</span> — All rights reserved. Not affiliated with Roblox Corporation.</p>
+    <p style="margin-top:0.5rem;">Join our <a href="https://discord.gg/D5NKtBJEzz" target="_blank" style="color:#7289da;text-decoration:none;">Discord</a> for support & updates.</p>
+  </footer>
+</div>
+
+<!-- ============ GAMES PAGE ============ -->
+<div id="page-games" class="page">
+  <div class="page-hero">
+    <span class="section-tag">Script Hub</span>
+    <h1 class="page-hero-title">Supported <span>Games</span></h1>
+    <div class="divider"></div>
+    <p class="page-hero-sub">Click <strong style="color:var(--orange2);">Copy Script</strong> or <strong style="color:var(--orange2);">Get Key</strong> for any game below.</p>
+  </div>
+
+  <!-- LEGEND -->
+  <div style="display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;padding:0 2rem;">
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--muted);font-weight:600;">
+      <span style="font-size:1rem;">🟢</span> Working
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--muted);font-weight:600;">
+      <span style="font-size:1rem;">🟡</span> Partial
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;color:var(--muted);font-weight:600;">
+      <span style="font-size:1rem;">🔴</span> Issues
+    </div>
+  </div>
+
+  <div class="glist-wrap">
+
+    <!-- ── GREEN GAMES ── -->
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Climb and Plunge</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Roller for Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">1 Plank = $1/s</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Bike Obby For Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">2X 🍀 Anime Card Collection</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Oil Empire 🛢️</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Kick a Lucky Block</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Pressure Wash for Brainrots</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Unbox a Factory</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Don't Steal the Bobo 🐻</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">☢️ Dont Get Caught For Hackers! 🚨</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Loot Hero [Beta]</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Swing Obby for Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Sail For Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">👶 Dont Steal Baby From Penguins!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">🐰 Spin a Brainrot 🎲</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">🐰 Survive LAVA for Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Untitled Melee RNG [KILLS OFFLINE!]</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Grow BIG Every Second!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">🔄 Spin a Soccer Card</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">🐰 EASTER + 📊 x2 Re:Rangers X</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Steal The Brainrot Base 🧠</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Grow Beanstalk For Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Get STRONG for Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Parkour For Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Defeat and Collect Anime</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">Open Sea For Brainrots!</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="green">
+      <div class="glist-left">
+        <span class="glist-dot">🟢</span>
+        <span class="glist-name">🥦 +1 Fat To Fit</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <!-- ── YELLOW GAMES ── -->
+    <div class="glist-item" data-status="yellow">
+      <div class="glist-left">
+        <span class="glist-dot">🟡</span>
+        <span class="glist-name">My Knife Farm [GEM &amp; ANIME]</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="yellow">
+      <div class="glist-left">
+        <span class="glist-dot">🟡</span>
+        <span class="glist-name">Cut Grass for Brainrots</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="yellow">
+      <div class="glist-left">
+        <span class="glist-dot">🟡</span>
+        <span class="glist-name">Brainrot Heroes 🏹</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="yellow">
+      <div class="glist-left">
+        <span class="glist-dot">🟡</span>
+        <span class="glist-name">Shrink For Brainrots</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <div class="glist-item" data-status="yellow">
+      <div class="glist-left">
+        <span class="glist-dot">🟡</span>
+        <span class="glist-name">Escape Getting Shredded For Brainrots</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+    <!-- ── RED GAMES ── -->
+    <div class="glist-item" data-status="red">
+      <div class="glist-left">
+        <span class="glist-dot">🔴</span>
+        <span class="glist-name">Be a Lucky Block</span>
+      </div>
+      <div class="glist-right">
+        <div class="glist-script-row">
+          <code class="glist-code">loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()</code>
+          <button class="glist-copy" onclick="copyGameScript(this)">📋 Copy</button>
+        </div>
+        <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="glist-key-btn">🔑 Get Key</a>
+      </div>
+    </div>
+
+  </div><!-- end glist-wrap -->
+
+  <footer style="margin-top:3rem;">
+    <p>© 2025 <span>Forge Hub</span> — All rights reserved.</p>
+    <p style="margin-top:0.5rem;">Join our <a href="https://discord.gg/D5NKtBJEzz" target="_blank" style="color:#7289da;text-decoration:none;">Discord</a> for support & updates.</p>
+  </footer>
+</div>
+
+<!-- ============ KEY PAGE ============ -->
+<div id="page-key" class="page">
+  <div class="key-page">
+    <div class="key-container">
+      <div class="key-icon">🔑</div>
+      <h1 class="key-title">Key <span>System</span></h1>
+      <div class="divider"></div>
+      <p class="key-desc">
+        Forge Hub uses a free key system to prevent abuse and keep the script online. Complete a short checkpoint to get your key — it's free and takes under a minute!
+      </p>
+
+      <div class="key-steps">
+        <div class="key-step">
+          <div class="step-num">1</div>
+          <div class="step-text">
+            <div class="step-title">Click "Get Key" Below</div>
+            <div class="step-desc">You'll be taken to the checkpoint page. Your HWID is detected automatically.</div>
+          </div>
+        </div>
+        <div class="key-step">
+          <div class="step-num">2</div>
+          <div class="step-text">
+            <div class="step-title">Complete the Checkpoint</div>
+            <div class="step-desc">Complete a short Lootlink task — takes about 30–60 seconds.</div>
+          </div>
+        </div>
+        <div class="key-step">
+          <div class="step-num">3</div>
+          <div class="step-text">
+            <div class="step-title">Copy & Paste Your Key</div>
+            <div class="step-desc">Paste the key into the Forge Hub loader and start using the script!</div>
+          </div>
+        </div>
+      </div>
+
+      <a href="https://new.pandadevelopment.net/getkey/httpslootlinkcoms0u4sku?hwid=YOUR_HWID" target="_blank" class="key-get-btn">
+        🔑 GET YOUR KEY NOW
+      </a>
+
+      <button class="btn btn-outline" onclick="copyScript()" style="width:100%;justify-content:center;margin-bottom:1rem;">
+        📋 Copy Script
+      </button>
+
+      <div class="key-warning">
+        ⚠️ <span>Keys are free. Never pay anyone claiming to sell Forge Hub keys — they are scammers.</span>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <p>© 2025 <span>Forge Hub</span> — All rights reserved.</p>
+    <p style="margin-top:0.5rem;">Join our <a href="https://discord.gg/D5NKtBJEzz" target="_blank" style="color:#7289da;text-decoration:none;">Discord</a> for support & updates.</p>
+  </footer>
+</div>
+
+<script>
+// ─── PAGE ROUTER ───
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── COPY GAME SCRIPT ───
+function copyGameScript(btn) {
+  const script = `loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()`;
+  navigator.clipboard.writeText(script).then(() => {
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 2000);
+  });
+}
+
+// ─── COPY SCRIPT ───
+function copyScript() {
+  const script = `loadstring(game:HttpGet("https://raw.githubusercontent.com/QeropTheeeeeee/ZyroYonkHub/refs/heads/main/ZyroYOnk"))()`;
+  navigator.clipboard.writeText(script).then(() => {
+    const btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(b => {
+      b.textContent = '✅ Copied!';
+      setTimeout(() => b.textContent = '📋 Copy', 2000);
+    });
+  });
+}
+
+// ─── PARTICLES ───
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.5 + 0.3;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = -Math.random() * 0.4 - 0.1;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.color = Math.random() > 0.7
+      ? `rgba(255,107,26,${this.opacity})`
+      : `rgba(100,140,200,${this.opacity * 0.5})`;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.y < -5) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 120; i++) particles.push(new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
